@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Goal Tracker</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* Light blue gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h2 {
+            color: #007bff;
+            font-size: 2em;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            background: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            margin: 10px;
+        }
+        .buttons button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        .subject-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        textarea, input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #f7f7f7;
+        }
+        button.mark-complete {
+            background: #28a745;
+            margin-top: 10px;
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button.mark-complete:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .tick {
+            color: #28a745;
+            font-size: 24px;
+            font-weight: bold;
+            display: none;
+        }
+        .done-text {
+            color: #28a745;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #007bff;
+        }
+        .reset-button {
+            background: #dc3545;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .reset-button:hover {
+            background: #c82333;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .buttons button {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            textarea, input {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📚 Today Goal Tracker</h2>
+        <div class="buttons">
+            <button onclick="showSubject('physics')">Physics</button>
+            <button onclick="showSubject('chemistry')">Chemistry</button>
+            <button onclick="showSubject('math')">Math</button>
+        </div>
+        
+        <div class="subject-container" id="physics">
+            <h3>Physics</h3>
+            <textarea id="physics_topics" placeholder="Topics Covered..."></textarea>
+            <input type="number" id="physics_goal" placeholder="Total Questions">
+            <input type="number" id="physics_actual" placeholder="Questions Done">
+            <button class="mark-complete" onclick="markCompleted('physics')">✔ Mark as Completed</button>
+            <span id="physics_tick" class="tick">✔</span>
+            <span id="physics_done" class="done-text">DONE</span>
+        </div>
+        
+        <div class="subject-container" id="chemistry">
+            <h3>Chemistry</h3>
+            <textarea id="chemistry_topics" placeholder="Topics Covered..."></textarea>
+            <input type="number" id="chemistry_goal" placeholder="Total Questions">
+            <input type="number" id="chemistry_actual" placeholder="Questions Done">
+            <button class="mark-complete" onclick="markCompleted('chemistry')">✔ Mark as Completed</button>
+            <span id="chemistry_tick" class="tick">✔</span>
+            <span id="chemistry_done" class="done-text">DONE</span>
+        </div>
+        
+        <div class="subject-container" id="math">
+            <h3>Math</h3>
+            <textarea id="math_topics" placeholder="Topics Covered..."></textarea>
+            <input type="number" id="math_goal" placeholder="Total Questions">
+            <input type="number" id="math_actual" placeholder="Questions Done">
+            <button class="mark-complete" onclick="markCompleted('math')">✔ Mark as Completed</button>
+            <span id="math_tick" class="tick">✔</span>
+            <span id="math_done" class="done-text">DONE</span>
+        </div>
+        
+        <button onclick="calculateProgress()" class="mark-complete">📊 Calculate Progress</button>
+        <p class="result" id="percentage"></p>
+
+        <button class="reset-button" onclick="resetAll()">🔄 Reset All</button>
+    </div>
+
+    <script>
+        function showSubject(subject) {
+            document.querySelectorAll('.subject-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            document.getElementById(subject).style.display = 'block';
+        }
+        
+        function calculateProgress() {
+            let subjects = ['physics', 'chemistry', 'math'];
+            let totalGoal = 0;
+            let totalActual = 0;
+            subjects.forEach(subject => {
+                let goal = parseInt(document.getElementById(subject + '_goal').value) || 0;
+                let actual = parseInt(document.getElementById(subject + '_actual').value) || 0;
+                totalGoal += goal;
+                totalActual += actual;
+            });
+            if (totalGoal > 0) {
+                let percentage = (totalActual / totalGoal) * 100;
+                document.getElementById('percentage').innerText = `Total Completion: ${percentage.toFixed(2)}%`;
+            } else {
+                document.getElementById('percentage').innerText = "Please enter valid goals.";
+            }
+        }
+        
+        function markCompleted(subject) {
+            document.getElementById(subject + '_tick').style.display = 'inline';
+            document.getElementById(subject + '_done').style.display = 'inline';
+            saveToLocalStorage(subject);
+        }
+        
+        function saveToLocalStorage(subject) {
+            let topics = document.getElementById(subject + '_topics').value;
+            let goal = document.getElementById(subject + '_goal').value;
+            let actual = document.getElementById(subject + '_actual').value;
+            let completed = true;
+            localStorage.setItem(subject, JSON.stringify({ topics, goal, actual, completed }));
+        }
+        
+        function loadFromLocalStorage() {
+            ['physics', 'chemistry', 'math'].forEach(subject => {
+                let data = JSON.parse(localStorage.getItem(subject));
+                if (data) {
+                    document.getElementById(subject + '_topics').value = data.topics;
+                    document.getElementById(subject + '_goal').value = data.goal;
+                    document.getElementById(subject + '_actual').value = data.actual;
+                    if (data.completed) {
+                        document.getElementById(subject + '_tick').style.display = 'inline';
+                        document.getElementById(subject + '_done').style.display = 'inline';
+                    }
+                }
+            });
+        }
+
+        function resetAll() {
+            localStorage.clear();
+            document.querySelectorAll('.subject-container').forEach(container => {
+                container.querySelector('textarea').value = '';
+                container.querySelector('input').value = '';
+                container.querySelector('.tick').style.display = 'none';
+                container.querySelector('.done-text').style.display = 'none';
+            });
+            document.getElementById('percentage').innerText = '';
+            alert('All data has been reset!');
+        }
+
+        window.onload = loadFromLocalStorage;
+    </script>
+</body>
+</html>
