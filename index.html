@@ -40,11 +40,42 @@
 
         .subject {
             background: white;
-            padding: 1rem;
             border-radius: 0.75rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-            touch-action: manipulation;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .subject.collapsed {
+            background: #f8f9fa;
+        }
+
+        .subject-content {
+            padding: 0 1rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .subject.collapsed .subject-content {
+            display: none;
+        }
+
+        .chevron {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+        }
+
+        .collapsed .chevron {
+            transform: rotate(180deg);
         }
 
         .subject.physics { border-left: 4px solid var(--physics); }
@@ -52,7 +83,6 @@
         .subject.math { border-left: 4px solid var(--math); }
 
         h2 {
-            margin-bottom: 0.75rem;
             color: inherit;
             font-weight: 600;
             font-size: 1.25rem;
@@ -204,8 +234,12 @@
                 gap: 1.5rem;
             }
 
-            .subject {
+            .subject-header {
                 padding: 1.5rem;
+            }
+
+            .subject-content {
+                padding: 0 1.5rem 1.5rem;
             }
 
             .task-form {
@@ -226,79 +260,94 @@
     <div class="container">
         <!-- Physics Section -->
         <div class="subject physics" data-subject="physics">
-            <h2>Physics</h2>
-            <form class="task-form">
-                <input type="text" placeholder="Add physics task..." class="task-input">
-                <button type="submit" class="primary-btn">Add</button>
-            </form>
-            <ul class="task-list"></ul>
-            <div class="progress-section">
-                <div class="progress-header">
-                    <div>Question Progress</div>
-                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="goal-inputs">
-                    <input type="number" placeholder="Set goal" class="goal-set">
-                    <input type="number" placeholder="Completed" class="goal-completed">
-                </div>
+            <div class="subject-header">
+                <h2>Physics</h2>
+                <div class="chevron">▼</div>
             </div>
-            <div class="reset-section">
-                <button class="danger-btn reset-btn">Reset Section</button>
+            <div class="subject-content">
+                <form class="task-form">
+                    <input type="text" placeholder="Add physics task..." class="task-input">
+                    <button type="submit" class="primary-btn">Add</button>
+                </form>
+                <ul class="task-list"></ul>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <div>Question Progress</div>
+                        <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="goal-inputs">
+                        <input type="number" placeholder="Set goal" class="goal-set">
+                        <input type="number" placeholder="Completed" class="goal-completed">
+                    </div>
+                </div>
+                <div class="reset-section">
+                    <button class="danger-btn reset-btn">Reset Section</button>
+                </div>
             </div>
         </div>
 
         <!-- Chemistry Section -->
         <div class="subject chemistry" data-subject="chemistry">
-            <h2>Chemistry</h2>
-            <form class="task-form">
-                <input type="text" placeholder="Add chemistry task..." class="task-input">
-                <button type="submit" class="primary-btn">Add</button>
-            </form>
-            <ul class="task-list"></ul>
-            <div class="progress-section">
-                <div class="progress-header">
-                    <div>Question Progress</div>
-                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="goal-inputs">
-                    <input type="number" placeholder="Set goal" class="goal-set">
-                    <input type="number" placeholder="Completed" class="goal-completed">
-                </div>
+            <div class="subject-header">
+                <h2>Chemistry</h2>
+                <div class="chevron">▼</div>
             </div>
-            <div class="reset-section">
-                <button class="danger-btn reset-btn">Reset Section</button>
+            <div class="subject-content">
+                <form class="task-form">
+                    <input type="text" placeholder="Add chemistry task..." class="task-input">
+                    <button type="submit" class="primary-btn">Add</button>
+                </form>
+                <ul class="task-list"></ul>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <div>Question Progress</div>
+                        <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="goal-inputs">
+                        <input type="number" placeholder="Set goal" class="goal-set">
+                        <input type="number" placeholder="Completed" class="goal-completed">
+                    </div>
+                </div>
+                <div class="reset-section">
+                    <button class="danger-btn reset-btn">Reset Section</button>
+                </div>
             </div>
         </div>
 
         <!-- Math Section -->
         <div class="subject math" data-subject="math">
-            <h2>Math</h2>
-            <form class="task-form">
-                <input type="text" placeholder="Add math task..." class="task-input">
-                <button type="submit" class="primary-btn">Add</button>
-            </form>
-            <ul class="task-list"></ul>
-            <div class="progress-section">
-                <div class="progress-header">
-                    <div>Question Progress</div>
-                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="goal-inputs">
-                    <input type="number" placeholder="Set goal" class="goal-set">
-                    <input type="number" placeholder="Completed" class="goal-completed">
-                </div>
+            <div class="subject-header">
+                <h2>Math</h2>
+                <div class="chevron">▼</div>
             </div>
-            <div class="reset-section">
-                <button class="danger-btn reset-btn">Reset Section</button>
+            <div class="subject-content">
+                <form class="task-form">
+                    <input type="text" placeholder="Add math task..." class="task-input">
+                    <button type="submit" class="primary-btn">Add</button>
+                </form>
+                <ul class="task-list"></ul>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <div>Question Progress</div>
+                        <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="goal-inputs">
+                        <input type="number" placeholder="Set goal" class="goal-set">
+                        <input type="number" placeholder="Completed" class="goal-completed">
+                    </div>
+                </div>
+                <div class="reset-section">
+                    <button class="danger-btn reset-btn">Reset Section</button>
+                </div>
             </div>
         </div>
     </div>
@@ -311,10 +360,15 @@
                 this.data = JSON.parse(localStorage.getItem(this.storageKey)) || {
                     tasks: [],
                     questionGoal: 0,
-                    questionCompleted: 0
+                    questionCompleted: 0,
+                    expanded: true
                 };
 
                 // DOM Elements
+                this.subjectElement = subjectElement;
+                this.subjectHeader = subjectElement.querySelector('.subject-header');
+                this.chevron = subjectElement.querySelector('.chevron');
+                this.subjectContent = subjectElement.querySelector('.subject-content');
                 this.taskForm = subjectElement.querySelector('.task-form');
                 this.taskInput = subjectElement.querySelector('.task-input');
                 this.taskList = subjectElement.querySelector('.task-list');
@@ -329,6 +383,7 @@
             }
 
             initialize() {
+                this.subjectHeader.addEventListener('click', this.toggleSection.bind(this));
                 this.taskForm.addEventListener('submit', this.handleTaskSubmit.bind(this));
                 this.taskList.addEventListener('click', this.handleTaskActions.bind(this));
                 this.taskList.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
@@ -337,7 +392,16 @@
                 this.goalCompleted.addEventListener('change', this.handleCompletedChange.bind(this));
                 this.resetBtn.addEventListener('click', this.resetSection.bind(this));
 
+                if (!this.data.expanded) {
+                    this.subjectElement.classList.add('collapsed');
+                }
                 this.render();
+            }
+
+            toggleSection() {
+                this.subjectElement.classList.toggle('collapsed');
+                this.data.expanded = !this.subjectElement.classList.contains('collapsed');
+                this.save();
             }
 
             handleTaskSubmit(e) {
@@ -406,7 +470,7 @@
 
             save() {
                 localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-                this.render();
+                if (this.data.expanded) this.render();
             }
 
             render() {
