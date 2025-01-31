@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Study Goals Tracker</title>
     <style>
         :root {
@@ -25,28 +25,26 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 2rem;
+            padding: 1rem;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             display: grid;
-            gap: 1.5rem;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            grid-template-columns: 1fr;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .subject {
             background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s ease;
-        }
-
-        .subject:hover {
-            transform: translateY(-2px);
+            touch-action: manipulation;
         }
 
         .subject.physics { border-left: 4px solid var(--physics); }
@@ -54,22 +52,25 @@
         .subject.math { border-left: 4px solid var(--math); }
 
         h2 {
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             color: inherit;
             font-weight: 600;
+            font-size: 1.25rem;
         }
 
         .task-form {
             display: flex;
+            flex-direction: column;
             gap: 0.5rem;
             margin-bottom: 1rem;
         }
 
         input {
-            padding: 0.75rem;
+            padding: 0.875rem;
             border: 1px solid #ddd;
             border-radius: 0.5rem;
-            flex: 1;
+            width: 100%;
+            font-size: 1rem;
             transition: border-color 0.2s ease;
         }
 
@@ -79,12 +80,14 @@
         }
 
         button {
-            padding: 0.75rem 1.25rem;
+            padding: 0.875rem;
             border: none;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: 500;
+            width: 100%;
+            font-size: 1rem;
         }
 
         .primary-btn {
@@ -99,18 +102,23 @@
 
         .task-list {
             list-style: none;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .task-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.75rem;
+            padding: 0.875rem;
             margin: 0.5rem 0;
             background: var(--bg);
             border-radius: 0.5rem;
             animation: slideIn 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .task-item.touch-active {
+            background: #f0f0f0;
         }
 
         @keyframes slideIn {
@@ -124,17 +132,18 @@
         }
 
         .progress-section {
-            margin: 1.5rem 0;
+            margin: 1rem 0;
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .progress-bar {
-            height: 12px;
+            height: 10px;
             background: #eee;
             border-radius: 6px;
             overflow: hidden;
@@ -150,23 +159,66 @@
         .goal-inputs {
             display: grid;
             gap: 0.5rem;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
+            margin-top: 0.5rem;
         }
 
         .reset-section {
             margin-top: 1rem;
-            text-align: right;
         }
 
         .delete-btn {
             margin-left: auto;
             background: none;
             color: var(--danger);
-            padding: 0.25rem;
+            padding: 0.5rem;
+            min-width: 36px;
+            min-height: 36px;
         }
 
         [type="checkbox"] {
+            width: 18px;
+            height: 18px;
             accent-color: var(--success);
+            flex-shrink: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem;
+            }
+            
+            .container {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .subject {
+                padding: 1.5rem;
+            }
+
+            .task-form {
+                flex-direction: row;
+            }
+
+            .goal-inputs {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .reset-section button {
+                width: auto;
+            }
         }
     </style>
 </head>
@@ -279,6 +331,8 @@
             initialize() {
                 this.taskForm.addEventListener('submit', this.handleTaskSubmit.bind(this));
                 this.taskList.addEventListener('click', this.handleTaskActions.bind(this));
+                this.taskList.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+                this.taskList.addEventListener('touchend', this.handleTouchEnd.bind(this));
                 this.goalSet.addEventListener('change', this.handleGoalChange.bind(this));
                 this.goalCompleted.addEventListener('change', this.handleCompletedChange.bind(this));
                 this.resetBtn.addEventListener('click', this.resetSection.bind(this));
@@ -307,6 +361,16 @@
                 } else if (e.target.matches('.delete-btn')) {
                     this.deleteTask(index);
                 }
+            }
+
+            handleTouchStart(e) {
+                const taskItem = e.target.closest('.task-item');
+                if (taskItem) taskItem.classList.add('touch-active');
+            }
+
+            handleTouchEnd(e) {
+                const taskItem = e.target.closest('.task-item');
+                if (taskItem) taskItem.classList.remove('touch-active');
             }
 
             handleGoalChange() {
@@ -352,7 +416,7 @@
                         <li class="task-item ${task.completed ? 'completed' : ''}">
                             <input type="checkbox" ${task.completed ? 'checked' : ''}>
                             <span>${task.text}</span>
-                            <button class="delete-btn">×</button>
+                            <button class="delete-btn" aria-label="Delete task">×</button>
                         </li>
                     `).join('');
 
