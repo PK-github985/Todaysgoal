@@ -3,251 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Goal Tracker</title>
+    <title>Study Goals Tracker</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        :root {
+            --physics: #ff6b6b;
+            --chemistry: #4ecdc4;
+            --math: #45b7d1;
+            --danger: #ff4444;
+            --success: #4CAF50;
+            --bg: #f8f9fa;
+            --text: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* Light blue gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            color: #333;
         }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
         .container {
-            width: 90%;
-            max-width: 800px;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            max-width: 1200px;
+            margin: 0 auto;
         }
+
+        .subject {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .subject:hover {
+            transform: translateY(-2px);
+        }
+
+        .subject.physics { border-left: 4px solid var(--physics); }
+        .subject.chemistry { border-left: 4px solid var(--chemistry); }
+        .subject.math { border-left: 4px solid var(--math); }
+
         h2 {
-            color: #007bff;
-            font-size: 2em;
+            margin-bottom: 1rem;
+            color: inherit;
+            font-weight: 600;
         }
-        .buttons {
+
+        .task-form {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
-        .buttons button {
-            background: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s, transform 0.2s;
-            margin: 10px;
-        }
-        .buttons button:hover {
-            background: #0056b3;
-            transform: scale(1.05);
-        }
-        .subject-container {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-        textarea, input {
-            width: 100%;
-            margin: 10px 0;
-            padding: 12px;
+
+        input {
+            padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            background: #f7f7f7;
+            border-radius: 0.5rem;
+            flex: 1;
+            transition: border-color 0.2s ease;
         }
-        button.mark-complete {
-            background: #28a745;
-            margin-top: 10px;
-            padding: 8px 14px;
-            font-size: 14px;
-            font-weight: bold;
+
+        input:focus {
+            outline: none;
+            border-color: currentColor;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
             border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .primary-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .danger-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .task-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .task-item.completed {
+            background: #e8ffe8;
+            opacity: 0.7;
+        }
+
+        .progress-section {
+            margin: 1.5rem 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #eee;
             border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
+            overflow: hidden;
         }
-        button.mark-complete:hover {
-            background: #218838;
-            transform: scale(1.05);
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #45b7d1);
+            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .tick {
-            color: #28a745;
-            font-size: 24px;
-            font-weight: bold;
-            display: none;
+
+        .goal-inputs {
+            display: grid;
+            gap: 0.5rem;
+            grid-template-columns: 1fr 1fr;
         }
-        .done-text {
-            color: #28a745;
-            font-size: 18px;
-            font-weight: bold;
-            display: none;
+
+        .reset-section {
+            margin-top: 1rem;
+            text-align: right;
         }
-        .result {
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: #007bff;
+
+        .delete-btn {
+            margin-left: auto;
+            background: none;
+            color: var(--danger);
+            padding: 0.25rem;
         }
-        .reset-button {
-            background: #dc3545;
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .reset-button:hover {
-            background: #c82333;
-        }
-        @media screen and (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-            .buttons button {
-                font-size: 14px;
-                padding: 10px 15px;
-            }
-            textarea, input {
-                font-size: 14px;
-                padding: 10px;
-            }
+
+        [type="checkbox"] {
+            accent-color: var(--success);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>📚 Today Goal Tracker</h2>
-        <div class="buttons">
-            <button onclick="showSubject('physics')">Physics</button>
-            <button onclick="showSubject('chemistry')">Chemistry</button>
-            <button onclick="showSubject('math')">Math</button>
+        <!-- Physics Section -->
+        <div class="subject physics" data-subject="physics">
+            <h2>Physics</h2>
+            <form class="task-form">
+                <input type="text" placeholder="Add physics task..." class="task-input">
+                <button type="submit" class="primary-btn">Add</button>
+            </form>
+            <ul class="task-list"></ul>
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div>Question Progress</div>
+                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="goal-inputs">
+                    <input type="number" placeholder="Set goal" class="goal-set">
+                    <input type="number" placeholder="Completed" class="goal-completed">
+                </div>
+            </div>
+            <div class="reset-section">
+                <button class="danger-btn reset-btn">Reset Section</button>
+            </div>
         </div>
-        
-        <div class="subject-container" id="physics">
-            <h3>Physics</h3>
-            <textarea id="physics_topics" placeholder="Topics Covered..."></textarea>
-            <input type="number" id="physics_goal" placeholder="Total Questions">
-            <input type="number" id="physics_actual" placeholder="Questions Done">
-            <button class="mark-complete" onclick="markCompleted('physics')">✔ Mark as Completed</button>
-            <span id="physics_tick" class="tick">✔</span>
-            <span id="physics_done" class="done-text">DONE</span>
-        </div>
-        
-        <div class="subject-container" id="chemistry">
-            <h3>Chemistry</h3>
-            <textarea id="chemistry_topics" placeholder="Topics Covered..."></textarea>
-            <input type="number" id="chemistry_goal" placeholder="Total Questions">
-            <input type="number" id="chemistry_actual" placeholder="Questions Done">
-            <button class="mark-complete" onclick="markCompleted('chemistry')">✔ Mark as Completed</button>
-            <span id="chemistry_tick" class="tick">✔</span>
-            <span id="chemistry_done" class="done-text">DONE</span>
-        </div>
-        
-        <div class="subject-container" id="math">
-            <h3>Math</h3>
-            <textarea id="math_topics" placeholder="Topics Covered..."></textarea>
-            <input type="number" id="math_goal" placeholder="Total Questions">
-            <input type="number" id="math_actual" placeholder="Questions Done">
-            <button class="mark-complete" onclick="markCompleted('math')">✔ Mark as Completed</button>
-            <span id="math_tick" class="tick">✔</span>
-            <span id="math_done" class="done-text">DONE</span>
-        </div>
-        
-        <button onclick="calculateProgress()" class="mark-complete">📊 Calculate Progress</button>
-        <p class="result" id="percentage"></p>
 
-        <button class="reset-button" onclick="resetAll()">🔄 Reset All</button>
+        <!-- Chemistry Section -->
+        <div class="subject chemistry" data-subject="chemistry">
+            <h2>Chemistry</h2>
+            <form class="task-form">
+                <input type="text" placeholder="Add chemistry task..." class="task-input">
+                <button type="submit" class="primary-btn">Add</button>
+            </form>
+            <ul class="task-list"></ul>
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div>Question Progress</div>
+                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="goal-inputs">
+                    <input type="number" placeholder="Set goal" class="goal-set">
+                    <input type="number" placeholder="Completed" class="goal-completed">
+                </div>
+            </div>
+            <div class="reset-section">
+                <button class="danger-btn reset-btn">Reset Section</button>
+            </div>
+        </div>
+
+        <!-- Math Section -->
+        <div class="subject math" data-subject="math">
+            <h2>Math</h2>
+            <form class="task-form">
+                <input type="text" placeholder="Add math task..." class="task-input">
+                <button type="submit" class="primary-btn">Add</button>
+            </form>
+            <ul class="task-list"></ul>
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div>Question Progress</div>
+                    <div><span class="completed-count">0</span>/<span class="goal-count">0</span></div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="goal-inputs">
+                    <input type="number" placeholder="Set goal" class="goal-set">
+                    <input type="number" placeholder="Completed" class="goal-completed">
+                </div>
+            </div>
+            <div class="reset-section">
+                <button class="danger-btn reset-btn">Reset Section</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        function showSubject(subject) {
-            document.querySelectorAll('.subject-container').forEach(container => {
-                container.style.display = 'none';
-            });
-            document.getElementById(subject).style.display = 'block';
-        }
-        
-        function calculateProgress() {
-            let subjects = ['physics', 'chemistry', 'math'];
-            let totalGoal = 0;
-            let totalActual = 0;
-            subjects.forEach(subject => {
-                let goal = parseInt(document.getElementById(subject + '_goal').value) || 0;
-                let actual = parseInt(document.getElementById(subject + '_actual').value) || 0;
-                totalGoal += goal;
-                totalActual += actual;
-            });
-            if (totalGoal > 0) {
-                let percentage = (totalActual / totalGoal) * 100;
-                document.getElementById('percentage').innerText = `Total Completion: ${percentage.toFixed(2)}%`;
-            } else {
-                document.getElementById('percentage').innerText = "Please enter valid goals.";
+        class SubjectTracker {
+            constructor(subjectElement) {
+                this.subject = subjectElement.dataset.subject;
+                this.storageKey = `${this.subject}Data`;
+                this.data = JSON.parse(localStorage.getItem(this.storageKey)) || {
+                    tasks: [],
+                    questionGoal: 0,
+                    questionCompleted: 0
+                };
+
+                // DOM Elements
+                this.taskForm = subjectElement.querySelector('.task-form');
+                this.taskInput = subjectElement.querySelector('.task-input');
+                this.taskList = subjectElement.querySelector('.task-list');
+                this.goalSet = subjectElement.querySelector('.goal-set');
+                this.goalCompleted = subjectElement.querySelector('.goal-completed');
+                this.progressFill = subjectElement.querySelector('.progress-fill');
+                this.completedCount = subjectElement.querySelector('.completed-count');
+                this.goalCount = subjectElement.querySelector('.goal-count');
+                this.resetBtn = subjectElement.querySelector('.reset-btn');
+
+                this.initialize();
+            }
+
+            initialize() {
+                this.taskForm.addEventListener('submit', this.handleTaskSubmit.bind(this));
+                this.taskList.addEventListener('click', this.handleTaskActions.bind(this));
+                this.goalSet.addEventListener('change', this.handleGoalChange.bind(this));
+                this.goalCompleted.addEventListener('change', this.handleCompletedChange.bind(this));
+                this.resetBtn.addEventListener('click', this.resetSection.bind(this));
+
+                this.render();
+            }
+
+            handleTaskSubmit(e) {
+                e.preventDefault();
+                const text = this.taskInput.value.trim();
+                if (text) {
+                    this.data.tasks.push({ text, completed: false });
+                    this.taskInput.value = '';
+                    this.save();
+                }
+            }
+
+            handleTaskActions(e) {
+                const taskItem = e.target.closest('.task-item');
+                if (!taskItem) return;
+
+                const index = [...this.taskList.children].indexOf(taskItem);
+                
+                if (e.target.matches('input[type="checkbox"]')) {
+                    this.toggleTask(index);
+                } else if (e.target.matches('.delete-btn')) {
+                    this.deleteTask(index);
+                }
+            }
+
+            handleGoalChange() {
+                this.data.questionGoal = Math.max(0, parseInt(this.goalSet.value) || 0);
+                this.save();
+            }
+
+            handleCompletedChange() {
+                this.data.questionCompleted = Math.max(0, 
+                    Math.min(parseInt(this.goalCompleted.value) || 0, this.data.questionGoal)
+                );
+                this.save();
+            }
+
+            toggleTask(index) {
+                this.data.tasks[index].completed = !this.data.tasks[index].completed;
+                this.save();
+            }
+
+            deleteTask(index) {
+                this.data.tasks.splice(index, 1);
+                this.save();
+            }
+
+            resetSection() {
+                if (confirm('Are you sure you want to reset this section?')) {
+                    this.data.tasks = [];
+                    this.data.questionGoal = 0;
+                    this.data.questionCompleted = 0;
+                    this.save();
+                }
+            }
+
+            save() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+                this.render();
+            }
+
+            render() {
+                // Render tasks
+                this.taskList.innerHTML = this.data.tasks
+                    .map((task, index) => `
+                        <li class="task-item ${task.completed ? 'completed' : ''}">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''}>
+                            <span>${task.text}</span>
+                            <button class="delete-btn">×</button>
+                        </li>
+                    `).join('');
+
+                // Render question progress
+                this.goalSet.value = this.data.questionGoal;
+                this.goalCompleted.value = this.data.questionCompleted;
+                this.completedCount.textContent = this.data.questionCompleted;
+                this.goalCount.textContent = this.data.questionGoal;
+
+                const progress = this.data.questionGoal > 0 
+                    ? (this.data.questionCompleted / this.data.questionGoal) * 100 
+                    : 0;
+                this.progressFill.style.width = `${progress}%`;
             }
         }
-        
-        function markCompleted(subject) {
-            document.getElementById(subject + '_tick').style.display = 'inline';
-            document.getElementById(subject + '_done').style.display = 'inline';
-            saveToLocalStorage(subject);
-        }
-        
-        function saveToLocalStorage(subject) {
-            let topics = document.getElementById(subject + '_topics').value;
-            let goal = document.getElementById(subject + '_goal').value;
-            let actual = document.getElementById(subject + '_actual').value;
-            let completed = true;
-            localStorage.setItem(subject, JSON.stringify({ topics, goal, actual, completed }));
-        }
-        
-        function loadFromLocalStorage() {
-            ['physics', 'chemistry', 'math'].forEach(subject => {
-                let data = JSON.parse(localStorage.getItem(subject));
-                if (data) {
-                    document.getElementById(subject + '_topics').value = data.topics;
-                    document.getElementById(subject + '_goal').value = data.goal;
-                    document.getElementById(subject + '_actual').value = data.actual;
-                    if (data.completed) {
-                        document.getElementById(subject + '_tick').style.display = 'inline';
-                        document.getElementById(subject + '_done').style.display = 'inline';
-                    }
-                }
-            });
-        }
 
-        function resetAll() {
-            localStorage.clear();
-            document.querySelectorAll('.subject-container').forEach(container => {
-                container.querySelector('textarea').value = '';
-                container.querySelector('input').value = '';
-                container.querySelector('.tick').style.display = 'none';
-                container.querySelector('.done-text').style.display = 'none';
-            });
-            document.getElementById('percentage').innerText = '';
-            alert('All data has been reset!');
-        }
-
-        window.onload = loadFromLocalStorage;
+        // Initialize all subjects
+        document.querySelectorAll('.subject').forEach(subjectElement => {
+            new SubjectTracker(subjectElement);
+        });
     </script>
 </body>
 </html>
